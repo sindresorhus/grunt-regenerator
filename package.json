@@ -36,7 +36,7 @@
     "test": "grunt"
   },
   "dependencies": {
-    "regenerator": "~0.1.7"
+    "regenerator": "~0.2.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
