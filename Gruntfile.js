@@ -2,6 +2,9 @@
 module.exports = function (grunt) {
 	grunt.initConfig({
 		regenerator: {
+			options: {
+				includeRuntime: true
+			},
 			compile: {
 				files: {
 					'test/tmp/transpiled.js': [

@@ -29,21 +29,21 @@ grunt.loadNpmTasks('grunt-regenerator');
 
 ```js
 function *range(max, step) {
-  var count = 0;
-  step = step || 1;
+	var count = 0;
+	step = step || 1;
 
-  for (var i = 0; i < max; i += step) {
-    count++;
-    yield i;
-  }
+	for (var i = 0; i < max; i += step) {
+		count++;
+		yield i;
+	}
 
-  return count;
+	return count;
 }
 
 var gen = range(20, 3), info;
 
 while (!(info = gen.next()).done) {
-  console.log(info.value);
+	console.log(info.value);
 }
 
 console.log("steps taken: " + info.value);
@@ -53,42 +53,42 @@ Is transpiled into:
 
 ```js
 function range(max, step) {
-  var count, i;
+	var count, i;
 
-  return wrapGenerator(function($ctx) {
-    while (1) switch ($ctx.next) {
-    case 0:
-      count = 0;
-      step = step || 1;
-      i = 0;
-    case 3:
-      if (!(i < max)) {
-        $ctx.next = 10;
-        break;
-      }
+	return wrapGenerator(function($ctx) {
+		while (1) switch ($ctx.next) {
+		case 0:
+			count = 0;
+			step = step || 1;
+			i = 0;
+		case 3:
+			if (!(i < max)) {
+				$ctx.next = 10;
+				break;
+			}
 
-      count++;
-      $ctx.next = 7;
-      return i;
-    case 7:
-      i += step;
-      $ctx.next = 3;
-      break;
-    case 10:
-      $ctx.rval = count;
-      delete $ctx.thrown;
-      $ctx.next = 14;
-      break;
-    case 14:
-      return $ctx.stop();
-    }
-  }, this);
+			count++;
+			$ctx.next = 7;
+			return i;
+		case 7:
+			i += step;
+			$ctx.next = 3;
+			break;
+		case 10:
+			$ctx.rval = count;
+			delete $ctx.thrown;
+			$ctx.next = 14;
+			break;
+		case 14:
+			return $ctx.stop();
+		}
+	}, this);
 }
 
 var gen = range(20, 3), info;
 
 while (!(info = gen.next()).done) {
-  console.log(info.value);
+	console.log(info.value);
 }
 
 console.log("steps taken: " + info.value);
@@ -100,6 +100,9 @@ console.log("steps taken: " + info.value);
 ```javascript
 grunt.initConfig({
 	regenerator: {								// Task
+		options: {
+			includeRuntime: true
+		},
 		dist: {									// Target
 			files: {							// Dictionary of files
 				'dist/main.js': 'src/main.js'	// 'destination': 'source'
@@ -111,6 +114,16 @@ grunt.initConfig({
 grunt.loadNpmTasks('grunt-regenerator');
 grunt.registerTask('default', ['regenerator']);
 ```
+
+
+## Options
+
+### includeRuntime
+
+Type: `Boolean`  
+Default `false`
+
+> A small runtime library (less than 1KB compressed) is required to provide the wrapGenerator function. You can install it either as a CommonJS module or as a standalone .js file, whichever you prefer.
 
 
 ## License
