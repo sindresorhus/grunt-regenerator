@@ -7,7 +7,14 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-(function(global) {
+(function(
+  // Reliable reference to the global object (i.e. window in browsers).
+  global,
+
+  // Dummy constructor that we use as the .constructor property for
+  // functions that return Generator objects.
+  GeneratorFunction
+) {
   var hasOwn = Object.prototype.hasOwnProperty;
 
   if (global.wrapGenerator) {
@@ -32,15 +39,31 @@
   // breaking out of the dispatch switch statement.
   var ContinueSentinel = {};
 
+  wrapGenerator.mark = function(genFun) {
+    genFun.constructor = GeneratorFunction;
+    return genFun;
+  };
+
+  // Ensure isGeneratorFunction works when Function#name not supported.
+  if (GeneratorFunction.name !== "GeneratorFunction") {
+    GeneratorFunction.name = "GeneratorFunction";
+  }
+
+  wrapGenerator.isGeneratorFunction = function(genFun) {
+    var ctor = genFun && genFun.constructor;
+    return ctor ? GeneratorFunction.name === ctor.name : false;
+  };
+
   function Generator(innerFn, self) {
     var generator = this;
-    var context = new Context;
+    var context = new Context();
     var state = GenStateSuspendedStart;
 
     function invoke() {
       state = GenStateExecuting;
-      do var value = innerFn.call(self, context);
-      while (value === ContinueSentinel);
+      do {
+        var value = innerFn.call(self, context);
+      } while (value === ContinueSentinel);
       // If an exception is thrown from innerFn, we leave state ===
       // GenStateExecuting and loop back for another invocation.
       state = context.done
@@ -59,16 +82,35 @@
       }
     }
 
+    function handleDelegate(method, arg) {
+      var delegate = context.delegate;
+      if (delegate) {
+        try {
+          var info = delegate.generator[method](arg);
+        } catch (uncaught) {
+          context.delegate = null;
+          return generator.throw(uncaught);
+        }
+
+        if (info) {
+          if (info.done) {
+            context[delegate.resultName] = info.value;
+            context.next = delegate.nextLoc;
+          } else {
+            return info;
+          }
+        }
+
+        context.delegate = null;
+      }
+    }
+
     generator.next = function(value) {
       assertCanInvoke();
 
-      if (context.delegate) {
-        var info = context.delegate.next(value);
-        if (info.done) {
-          context.delegate = null;
-        } else {
-          return info;
-        }
+      var delegateInfo = handleDelegate("next", value);
+      if (delegateInfo) {
+        return delegateInfo;
       }
 
       if (state === GenStateSuspendedYield) {
@@ -82,16 +124,12 @@
       }
     };
 
-    generator["throw"] = function(exception) {
+    generator.throw = function(exception) {
       assertCanInvoke();
 
-      if (context.delegate) {
-        var info = context.delegate["throw"](exception);
-        if (info.done) {
-          context.delegate = null;
-        } else {
-          return info;
-        }
+      var delegateInfo = handleDelegate("throw", exception);
+      if (delegateInfo) {
+        return delegateInfo;
       }
 
       if (state === GenStateSuspendedStart) {
@@ -99,14 +137,20 @@
         throw exception;
       }
 
-      while (true) try {
+      while (true) {
         context.dispatchException(exception);
-        return invoke();
-      } catch (thrown) {
-        exception = thrown;
+        try {
+          return invoke();
+        } catch (thrown) {
+          exception = thrown;
+        }
       }
     };
   }
+
+  Generator.prototype.toString = function() {
+    return "[object Generator]";
+  };
 
   function Context() {
     this.reset();
@@ -124,23 +168,22 @@
 
       // Pre-initialize at least 20 temporary variables to enable hidden
       // class optimizations for simple generators.
-      var tempIndex = 0;
-      var tempName;
-      while (tempName = "t" + tempIndex, // N.B. Comma operator!
-             tempIndex < 20 || hasOwn.call(this, tempName)) {
+      for (var tempIndex = 0, tempName;
+           hasOwn.call(this, tempName = "t" + tempIndex) || tempIndex < 20;
+           ++tempIndex) {
         this[tempName] = null;
-        ++tempIndex;
       }
     },
 
     stop: function() {
+      this.done = true;
+
       if (hasOwn.call(this, "thrown")) {
         var thrown = this.thrown;
         delete this.thrown;
         throw thrown;
       }
 
-      this.done = true;
       return this.rval;
     },
 
@@ -186,7 +229,6 @@
     },
 
     dispatchException: function(exception) {
-      var entry;
       var finallyEntries = [];
       var dispatched = false;
 
@@ -194,10 +236,13 @@
         throw exception;
       }
 
+      // Dispatch the exception to the "end" location by default.
+      this.thrown = exception;
+      this.next = "end";
+
       for (var i = this.tryStack.length - 1; i >= 0; --i) {
-        entry = this.tryStack[i];
+        var entry = this.tryStack[i];
         if (entry.catchLoc) {
-          this.thrown = exception;
           this.next = entry.catchLoc;
           dispatched = true;
           break;
@@ -207,34 +252,40 @@
         }
       }
 
-      if (!dispatched) {
-        throw exception;
-      }
-
       while ((entry = finallyEntries.pop())) {
         this[entry.finallyTempVar] = this.next;
         this.next = entry.finallyLoc;
       }
     },
 
-    delegateYield: function(delegate, afterLoc) {
-      this.next = afterLoc;
-      var info = delegate.next(this.sent);
+    delegateYield: function(generator, resultName, nextLoc) {
+      var info = generator.next(this.sent);
+
       if (info.done) {
         this.delegate = null;
+        this[resultName] = info.value;
+        this.next = nextLoc;
+
         return ContinueSentinel;
-      } else {
-        this.delegate = delegate;
-        return info.value;
       }
+
+      this.delegate = {
+        generator: generator,
+        resultName: resultName,
+        nextLoc: nextLoc
+      };
+
+      return info.value;
     }
   };
-})(Function("return this")());
+}).apply(this, Function("return [this, function GeneratorFunction(){}]")());
+
+wrapGenerator.mark(range);
 
 function range(max, step) {
   var count, i;
 
-  return wrapGenerator(function($ctx) {
+  return wrapGenerator(function range$($ctx) {
     while (1) switch ($ctx.next) {
     case 0:
       count = 0;
@@ -259,6 +310,7 @@ function range(max, step) {
       $ctx.next = 14;
       break;
     case 14:
+    case "end":
       return $ctx.stop();
     }
   }, this);
@@ -271,5 +323,4 @@ while (!(info = gen.next()).done) {
 }
 
 console.log("steps taken: " + info.value);
-
 console.log('concat');
