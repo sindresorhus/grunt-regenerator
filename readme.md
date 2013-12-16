@@ -1,8 +1,6 @@
-# grunt-regenerator [![Build Status](https://secure.travis-ci.org/sindresorhus/grunt-regenerator.png?branch=master)](http://travis-ci.org/sindresorhus/grunt-regenerator)
+# grunt-regenerator [![Build Status](https://secure.travis-ci.org/sindresorhus/grunt-regenerator.png?branch=master)](http://travis-ci.org/sindresorhus/grunt-regenerator) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
-[Grunt][grunt] task to transpile ES6 generator functions to ES5 with [Regenerator](http://facebook.github.io/regenerator/).
-
-> A fully-functional source transformation that takes the proposed syntax for generators/yield from future versions of JS (ECMAScript 6 or ES6, experimentally implemented in Node.js v0.11) and spits out efficient JS-of-today (ES5) that behaves the same way.
+> Transpile ES6 generator functions to ES5 with [Regenerator](http://facebook.github.io/regenerator/).
 
 **Issues with the output should be reported on the [Regenerator issue tracker](https://github.com/facebook/regenerator/issues). Not here.**
 
