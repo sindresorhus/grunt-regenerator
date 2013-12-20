@@ -121,7 +121,7 @@ grunt.registerTask('default', ['regenerator']);
 ### includeRuntime
 
 Type: `Boolean`  
-Default `false`
+Default: `false`
 
 > A small runtime library (less than 1KB compressed) is required to provide the wrapGenerator function. You can install it either as a CommonJS module or as a standalone .js file, whichever you prefer.
 
