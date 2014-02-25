@@ -17,8 +17,6 @@
     "desugaring",
     "ES6"
   ],
-  "homepage": "https://github.com/sindresorhus/grunt-regenerator",
-  "bugs": "https://github.com/sindresorhus/grunt-regenerator/issues",
   "license": "MIT",
   "author": {
     "name": "Sindre Sorhus",
@@ -28,26 +26,23 @@
   "files": [
     "tasks/regenerator.js"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/sindresorhus/grunt-regenerator.git"
-  },
+  "repository": "sindresorhus/grunt-regenerator",
   "scripts": {
     "test": "grunt"
   },
   "dependencies": {
-    "regenerator": "~0.2.1",
-    "async": "~0.2.9"
+    "regenerator": "^0.4.1",
+    "async": "^0.2.9"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-simple-mocha": "~0.4.0",
-    "grunt-contrib-clean": "~0.5.0"
+    "grunt": "^0.4.1",
+    "grunt-simple-mocha": "^0.4.0",
+    "grunt-contrib-clean": "^0.5.0"
   },
   "peerDependencies": {
-    "grunt": "~0.4.0"
+    "grunt": "^0.4.0"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=0.10.0"
   }
 }
