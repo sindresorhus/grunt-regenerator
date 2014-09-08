@@ -1,6 +1,6 @@
 {
   "name": "grunt-regenerator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Transpile ES6 generator functions to ES5",
   "keywords": [
     "gruntplugin",
