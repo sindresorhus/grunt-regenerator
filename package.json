@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "each-async": "^1.0.0",
-    "regenerator": "^0.5.0"
+    "regenerator": "^0.6.5"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

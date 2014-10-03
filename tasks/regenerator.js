@@ -7,7 +7,7 @@ module.exports = function (grunt) {
 		var options = this.options();
 
 		eachAsync(this.files, function (el, i, next) {
-			grunt.file.write(el.dest, regenerator(grunt.file.read(el.src[0]), options));
+			grunt.file.write(el.dest, regenerator.compile(grunt.file.read(el.src[0]), options).code);
 			next();
 		}, this.async());
 	});
