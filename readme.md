@@ -7,7 +7,7 @@
 
 ## Install
 
-```sh
+```
 $ npm install --save-dev grunt-regenerator
 ```
 
@@ -38,7 +38,7 @@ grunt.registerTask('default', ['regenerator']);
 
 ### includeRuntime
 
-Type: `boolean`  
+Type: `boolean`<br>
 Default: `false`
 
 > A small runtime library (less than 1KB compressed) is required to provide the wrapGenerator function. You can install it either as a CommonJS module or as a standalone .js file, whichever you prefer.
@@ -46,4 +46,4 @@ Default: `false`
 
 ## License
 
-MIT © [Sindre Sorhus](http://sindresorhus.com)
+MIT © [Sindre Sorhus](https://sindresorhus.com)
