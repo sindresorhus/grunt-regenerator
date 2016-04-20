@@ -1,7 +1,7 @@
 {
   "name": "grunt-regenerator",
   "version": "3.1.0",
-  "description": "Transpile ES6 generator functions to ES5",
+  "description": "Transpile ES2015 generator functions to ES5",
   "keywords": [
     "gruntplugin",
     "generator",
@@ -15,7 +15,7 @@
     "refactoring",
     "transpiler",
     "desugaring",
-    "ES6"
+    "es2015"
   ],
   "license": "MIT",
   "author": {
