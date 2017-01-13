@@ -1,12 +1,12 @@
 'use strict';
-var eachAsync = require('each-async');
-var regenerator = require('regenerator');
+const eachAsync = require('each-async');
+const regenerator = require('regenerator');
 
-module.exports = function (grunt) {
+module.exports = grunt => {
 	grunt.registerMultiTask('regenerator', 'Transpile ES6 generator functions to ES5', function () {
-		var options = this.options();
+		const options = this.options();
 
-		eachAsync(this.files, function (el, i, next) {
+		eachAsync(this.files, (el, i, next) => {
 			grunt.file.write(el.dest, regenerator.compile(grunt.file.read(el.src[0]), options).code);
 			next();
 		}, this.async());
