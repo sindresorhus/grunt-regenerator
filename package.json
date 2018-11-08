@@ -1,6 +1,6 @@
 {
   "name": "grunt-regenerator",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Transpile ES2015 generator functions to ES5",
   "license": "MIT",
   "repository": "sindresorhus/grunt-regenerator",
